@@ -1,0 +1,171 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+abstract class Persona {
+  - id: Integer
+  - nombre: String
+  - apellido: String
+  - nacionalidad: String
+  - correo: String
+  + getId(): Integer
+  + getNombre(): String
+  + getApellido(): String
+  + getNacionalidad(): String
+  + getCorreo(): String
+  + setId(id: Integer): void
+  + setNombre(nombre: String): void
+  + setApellido(apellido: String): void
+  + setNacionalidad(nacionalidad: String): void
+  + setCorreo(correo: String): void
+}
+
+class Jugador {
+  - ranking: Integer
+  - puntosAcumulados: Integer
+  - titulos: Integer
+  + getRanking(): Integer
+  + getPuntosAcumulados(): Integer
+  + getTitulos(): Integer
+  + setRanking(ranking: Integer): void
+  + setPuntosAcumulados(puntos: Integer): void
+  + setTitulos(titulos: Integer): void
+}
+
+class Arbitro {
+  - licencia: String
+  - aniosExperiencia: Integer
+  + getLicencia(): String
+  + getAniosExperiencia(): Integer
+  + setLicencia(licencia: String): void
+  + setAniosExperiencia(anios: Integer): void
+}
+
+class Torneo {
+  - id: Integer
+  - nombre: String
+  - ciudad: String
+  - pais: String
+  - fechaInicio: LocalDate
+  - fechaFin: LocalDate
+  - premioTotal: Integer
+  - superficie: Superficie
+  - categoria: Categoria
+  + getId(): Integer
+  + getNombre(): String
+  + getCiudad(): String
+  + getPais(): String
+  + getFechaInicio(): LocalDate
+  + getFechaFin(): LocalDate
+  + getPremioTotal(): Integer
+  + getSuperficie(): Superficie
+  + getCategoria(): Categoria
+}
+
+class Partido {
+  - id: Integer
+  - resultado: String
+  - duracionMinutos: Integer
+  - ronda: Ronda
+  - estado: EstadoPartido
+  - torneo: Torneo
+  - jugador1: Jugador
+  - jugador2: Jugador
+  - arbitro: Arbitro
+  - ganador: Jugador
+  + getId(): Integer
+  + getResultado(): String
+  + getDuracionMinutos(): Integer
+  + getRonda(): Ronda
+  + getEstado(): EstadoPartido
+  + getTorneo(): Torneo
+  + getJugador1(): Jugador
+  + getJugador2(): Jugador
+  + getArbitro(): Arbitro
+  + getGanador(): Jugador
+}
+
+enum Superficie {
+  ARCILLA
+  CESPED
+  DURA
+  INDOOR
+}
+
+enum Categoria {
+  ATP_250
+  ATP_500
+  MASTERS_1000
+  GRAND_SLAM
+}
+
+enum Ronda {
+  PRIMERA
+  SEGUNDA
+  TERCERA
+  OCTAVOS
+  CUARTOS
+  SEMIFINAL
+  FINAL
+}
+
+enum EstadoPartido {
+  PROGRAMADO
+  EN_CURSO
+  FINALIZADO
+  CANCELADO
+}
+
+interface EstrategiaPuntos {
+  + calcularPuntos(): int
+}
+
+class PuntosRondaFinal {
+  + calcularPuntos(): int
+}
+
+class PuntosRondaSemifinal {
+  + calcularPuntos(): int
+}
+
+class PuntosRondaCuartos {
+  + calcularPuntos(): int
+}
+
+class PuntosRondaOctavos {
+  + calcularPuntos(): int
+}
+
+class PuntosRondaTercera {
+  + calcularPuntos(): int
+}
+
+class PuntosRondaSegunda {
+  + calcularPuntos(): int
+}
+
+class PuntosRondaPrimera {
+  + calcularPuntos(): int
+}
+
+Persona <|-- Jugador
+Persona <|-- Arbitro
+
+Partido --> Torneo
+Partido --> Jugador
+Partido --> Arbitro
+
+Torneo --> Superficie
+Torneo --> Categoria
+Partido --> Ronda
+Partido --> EstadoPartido
+
+EstrategiaPuntos <|.. PuntosRondaFinal
+EstrategiaPuntos <|.. PuntosRondaSemifinal
+EstrategiaPuntos <|.. PuntosRondaCuartos
+EstrategiaPuntos <|.. PuntosRondaOctavos
+EstrategiaPuntos <|.. PuntosRondaTercera
+EstrategiaPuntos <|.. PuntosRondaSegunda
+EstrategiaPuntos <|.. PuntosRondaPrimera
+
+@enduml

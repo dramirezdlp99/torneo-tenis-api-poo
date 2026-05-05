@@ -1,0 +1,403 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #F5F7FA
+skinparam class {
+  BackgroundColor #DDEEFF
+  BorderColor #1565C0
+  FontColor #1a1a2e
+  HeaderBackgroundColor #1565C0
+  HeaderFontColor #FFFFFF
+}
+skinparam package {
+  BorderColor #1565C0
+  FontColor #1a1a2e
+}
+
+title Diagrama de Capas - Sistema de Torneo de Tenis
+
+package "Capa de Controladores" #E8F5E9 {
+
+  class JugadorController {
+    - jugadorService: IJugadorService
+    + crear(dto: JugadorDTO): ResponseEntity<?>
+    + listar(): ResponseEntity<List<Jugador>>
+    + buscar(id: Integer): ResponseEntity<?>
+    + actualizarPuntos(id: Integer, puntos: Integer): ResponseEntity<?>
+    + eliminar(id: Integer): ResponseEntity<?>
+  }
+
+  class ArbitroController {
+    - arbitroService: IArbitroService
+    + crear(dto: ArbitroDTO): ResponseEntity<?>
+    + listar(): ResponseEntity<List<Arbitro>>
+    + buscar(id: Integer): ResponseEntity<?>
+    + eliminar(id: Integer): ResponseEntity<?>
+  }
+
+  class TorneoController {
+    - torneoService: ITorneoService
+    + crear(dto: TorneoDTO): ResponseEntity<?>
+    + listar(): ResponseEntity<List<Torneo>>
+    + buscar(id: Integer): ResponseEntity<?>
+    + calcularPremio(id: Integer): ResponseEntity<?>
+    + eliminar(id: Integer): ResponseEntity<?>
+  }
+
+  class PartidoController {
+    - partidoService: IPartidoService
+    + crear(dto: PartidoDTO): ResponseEntity<?>
+    + listar(): ResponseEntity<List<Partido>>
+    + buscar(id: Integer): ResponseEntity<?>
+    + registrarGanador(id: Integer, idGanador: Integer): ResponseEntity<?>
+    + eliminar(id: Integer): ResponseEntity<?>
+  }
+}
+
+package "Capa de Servicios" #FFF9C4 {
+
+  interface IJugadorService {
+    + crearJugador(dto: JugadorDTO): Jugador
+    + listarJugadores(): List<Jugador>
+    + buscarPorId(id: Integer): Jugador
+    + actualizarPuntos(id: Integer, puntos: Integer): Jugador
+    + eliminarJugador(id: Integer): void
+  }
+
+  interface IArbitroService {
+    + crearArbitro(dto: ArbitroDTO): Arbitro
+    + listarArbitros(): List<Arbitro>
+    + buscarPorId(id: Integer): Arbitro
+    + eliminarArbitro(id: Integer): void
+  }
+
+  interface ITorneoService {
+    + crearTorneo(dto: TorneoDTO): Torneo
+    + listarTorneos(): List<Torneo>
+    + buscarPorId(id: Integer): Torneo
+    + eliminarTorneo(id: Integer): void
+    + calcularPremioCategoria(id: Integer): Integer
+  }
+
+  interface IPartidoService {
+    + crearPartido(dto: PartidoDTO): Partido
+    + registrarGanador(idPartido: Integer, idGanador: Integer): Partido
+    + listarPartidos(): List<Partido>
+    + buscarPorId(id: Integer): Partido
+    + eliminarPartido(id: Integer): void
+  }
+
+  class JugadorService {
+    - jugadorRepository: JugadorRepository
+    + crearJugador(dto: JugadorDTO): Jugador
+    + listarJugadores(): List<Jugador>
+    + buscarPorId(id: Integer): Jugador
+    + actualizarPuntos(id: Integer, puntos: Integer): Jugador
+    + eliminarJugador(id: Integer): void
+  }
+
+  class ArbitroService {
+    - arbitroRepository: ArbitroRepository
+    + crearArbitro(dto: ArbitroDTO): Arbitro
+    + listarArbitros(): List<Arbitro>
+    + buscarPorId(id: Integer): Arbitro
+    + eliminarArbitro(id: Integer): void
+  }
+
+  class TorneoService {
+    - torneoRepository: TorneoRepository
+    + crearTorneo(dto: TorneoDTO): Torneo
+    + listarTorneos(): List<Torneo>
+    + buscarPorId(id: Integer): Torneo
+    + eliminarTorneo(id: Integer): void
+    + calcularPremioCategoria(id: Integer): Integer
+  }
+
+  class PartidoService {
+    - partidoRepository: PartidoRepository
+    - jugadorService: IJugadorService
+    - arbitroService: IArbitroService
+    - torneoService: ITorneoService
+    + crearPartido(dto: PartidoDTO): Partido
+    + registrarGanador(idPartido: Integer, idGanador: Integer): Partido
+    + listarPartidos(): List<Partido>
+    + buscarPorId(id: Integer): Partido
+    + eliminarPartido(id: Integer): void
+  }
+
+  package "Strategy" #FFFDE7 {
+
+    interface EstrategiaPuntos {
+      + calcularPuntos(): int
+    }
+
+    class PuntosRondaFinal {
+      + calcularPuntos(): int
+    }
+
+    class PuntosRondaSemifinal {
+      + calcularPuntos(): int
+    }
+
+    class PuntosRondaCuartos {
+      + calcularPuntos(): int
+    }
+
+    class PuntosRondaOctavos {
+      + calcularPuntos(): int
+    }
+
+    class PuntosRondaTercera {
+      + calcularPuntos(): int
+    }
+
+    class PuntosRondaSegunda {
+      + calcularPuntos(): int
+    }
+
+    class PuntosRondaPrimera {
+      + calcularPuntos(): int
+    }
+  }
+}
+
+package "Capa de Repositorios" #FCE4EC {
+
+  interface JugadorRepository {
+    + save(jugador: Jugador): Jugador
+    + findAll(): List<Jugador>
+    + findById(id: Integer): Optional<Jugador>
+    + deleteById(id: Integer): void
+  }
+
+  interface ArbitroRepository {
+    + save(arbitro: Arbitro): Arbitro
+    + findAll(): List<Arbitro>
+    + findById(id: Integer): Optional<Arbitro>
+    + deleteById(id: Integer): void
+  }
+
+  interface TorneoRepository {
+    + save(torneo: Torneo): Torneo
+    + findAll(): List<Torneo>
+    + findById(id: Integer): Optional<Torneo>
+    + deleteById(id: Integer): void
+  }
+
+  interface PartidoRepository {
+    + save(partido: Partido): Partido
+    + findAll(): List<Partido>
+    + findById(id: Integer): Optional<Partido>
+    + deleteById(id: Integer): void
+  }
+}
+
+package "Capa de Modelo" #F3E5F5 {
+
+  abstract class Persona {
+    - id: Integer
+    - nombre: String
+    - apellido: String
+    - nacionalidad: String
+    - correo: String
+    + getId(): Integer
+    + getNombre(): String
+    + getApellido(): String
+    + getNacionalidad(): String
+    + getCorreo(): String
+    + setId(id: Integer): void
+    + setNombre(nombre: String): void
+    + setApellido(apellido: String): void
+    + setNacionalidad(nacionalidad: String): void
+    + setCorreo(correo: String): void
+  }
+
+  class Jugador {
+    - ranking: Integer
+    - puntosAcumulados: Integer
+    - titulos: Integer
+    + getRanking(): Integer
+    + getPuntosAcumulados(): Integer
+    + getTitulos(): Integer
+    + setRanking(ranking: Integer): void
+    + setPuntosAcumulados(puntos: Integer): void
+    + setTitulos(titulos: Integer): void
+  }
+
+  class Arbitro {
+    - licencia: String
+    - aniosExperiencia: Integer
+    + getLicencia(): String
+    + getAniosExperiencia(): Integer
+    + setLicencia(licencia: String): void
+    + setAniosExperiencia(anios: Integer): void
+  }
+
+  class Torneo {
+    - id: Integer
+    - nombre: String
+    - ciudad: String
+    - pais: String
+    - fechaInicio: LocalDate
+    - fechaFin: LocalDate
+    - premioTotal: Integer
+    - superficie: Superficie
+    - categoria: Categoria
+    + getId(): Integer
+    + getNombre(): String
+    + getCiudad(): String
+    + getPais(): String
+    + getFechaInicio(): LocalDate
+    + getFechaFin(): LocalDate
+    + getPremioTotal(): Integer
+    + getSuperficie(): Superficie
+    + getCategoria(): Categoria
+  }
+
+  class Partido {
+    - id: Integer
+    - resultado: String
+    - duracionMinutos: Integer
+    - ronda: Ronda
+    - estado: EstadoPartido
+    - torneo: Torneo
+    - jugador1: Jugador
+    - jugador2: Jugador
+    - arbitro: Arbitro
+    - ganador: Jugador
+    + getId(): Integer
+    + getResultado(): String
+    + getDuracionMinutos(): Integer
+    + getRonda(): Ronda
+    + getEstado(): EstadoPartido
+    + getTorneo(): Torneo
+    + getJugador1(): Jugador
+    + getJugador2(): Jugador
+    + getArbitro(): Arbitro
+    + getGanador(): Jugador
+  }
+
+  package "DTOs" #EDE7F6 {
+    class JugadorDTO {
+      - nombre: String
+      - apellido: String
+      - nacionalidad: String
+      - correo: String
+      - ranking: Integer
+      - puntosAcumulados: Integer
+      - titulos: Integer
+    }
+
+    class ArbitroDTO {
+      - nombre: String
+      - apellido: String
+      - nacionalidad: String
+      - correo: String
+      - licencia: String
+      - aniosExperiencia: Integer
+    }
+
+    class TorneoDTO {
+      - nombre: String
+      - ciudad: String
+      - pais: String
+      - fechaInicio: LocalDate
+      - fechaFin: LocalDate
+      - premioTotal: Integer
+      - superficie: Superficie
+      - categoria: Categoria
+    }
+
+    class PartidoDTO {
+      - idTorneo: Integer
+      - idJugador1: Integer
+      - idJugador2: Integer
+      - idArbitro: Integer
+      - idGanador: Integer
+      - resultado: String
+      - duracionMinutos: Integer
+      - ronda: Ronda
+      - estado: EstadoPartido
+    }
+  }
+
+  package "Enums" #E8EAF6 {
+    enum Superficie {
+      ARCILLA
+      CESPED
+      DURA
+      INDOOR
+    }
+
+    enum Categoria {
+      ATP_250
+      ATP_500
+      MASTERS_1000
+      GRAND_SLAM
+    }
+
+    enum Ronda {
+      PRIMERA
+      SEGUNDA
+      TERCERA
+      OCTAVOS
+      CUARTOS
+      SEMIFINAL
+      FINAL
+    }
+
+    enum EstadoPartido {
+      PROGRAMADO
+      EN_CURSO
+      FINALIZADO
+      CANCELADO
+    }
+  }
+}
+
+class "PostgreSQL\ntorneo_tenis" as DB {
+  torneo_tenis
+}
+
+' Controllers -> Interfaces Service
+JugadorController --> IJugadorService
+ArbitroController --> IArbitroService
+TorneoController --> ITorneoService
+PartidoController --> IPartidoService
+
+' Interfaces -> Implementaciones
+IJugadorService <|.. JugadorService
+IArbitroService <|.. ArbitroService
+ITorneoService <|.. TorneoService
+IPartidoService <|.. PartidoService
+
+' Strategy
+PartidoService --> EstrategiaPuntos
+EstrategiaPuntos <|.. PuntosRondaFinal
+EstrategiaPuntos <|.. PuntosRondaSemifinal
+EstrategiaPuntos <|.. PuntosRondaCuartos
+EstrategiaPuntos <|.. PuntosRondaOctavos
+EstrategiaPuntos <|.. PuntosRondaTercera
+EstrategiaPuntos <|.. PuntosRondaSegunda
+EstrategiaPuntos <|.. PuntosRondaPrimera
+
+' Services -> Repositories
+JugadorService --> JugadorRepository
+ArbitroService --> ArbitroRepository
+TorneoService --> TorneoRepository
+PartidoService --> PartidoRepository
+
+' Repositories -> DB
+JugadorRepository --> DB
+ArbitroRepository --> DB
+TorneoRepository --> DB
+PartidoRepository --> DB
+
+' Model relations
+Persona <|-- Jugador
+Persona <|-- Arbitro
+Partido --> Torneo
+Partido --> Jugador
+Partido --> Arbitro
+
+@enduml
